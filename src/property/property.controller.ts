@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Headers,
-  HttpCode,
   Param,
   ParseBoolPipe,
   ParseIntPipe,
@@ -21,18 +19,20 @@ import {
 } from './dto/createPropertyZod.dto';
 import { HeadersDto } from './dto/headers.dto';
 import { RequestHeader } from './pipes/request-header';
+import { PropertyService } from './property.service';
 
 @Controller('property')
 export class PropertyController {
+  constructor(private propertyService: PropertyService) {}
+
   @Get()
   findAll() {
-    return 'All properties';
+    return this.propertyService.findAll();
   }
+
   @Get(':id/:slug')
   findOne(@Param('id', ParseIntPipe) id, @Query('sort', ParseBoolPipe) sort) {
-    console.log(typeof sort);
-
-    return id;
+    return this.propertyService.findOne();
   }
 
   @Post()
@@ -42,7 +42,7 @@ export class PropertyController {
     @Body()
     body: CreatePropertyZodDto,
   ) {
-    return body;
+    return this.propertyService.create();
   }
 
   @Patch(':id')
@@ -52,6 +52,6 @@ export class PropertyController {
     @RequestHeader(new ValidationPipe({ validateCustomDecorators: true }))
     header: HeadersDto,
   ) {
-    return header;
+    return this.propertyService.update();
   }
 }
